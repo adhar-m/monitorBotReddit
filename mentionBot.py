@@ -9,35 +9,66 @@ def init_bot_login():
 	# Initialize PRAW with config file details and return reddit object
 	reddit = praw.Reddit(client_id=praw_config.client_id, client_secret=praw_config.client_secret, user_agent=praw_config.user_agent)
 	return reddit
- 
+
+def add_to_seen(comments_seen_file, comment_id):
+	comments_seen_writer = open(comments_seen_file,'a+')
+	comments_seen_writer.write(comment_id + '\n')
+	comments_seen_writer.close()
+
+def check_if_seen(comments_seen_file, comment_id):
+	comments_seen_reader = open(comments_seen, 'r')
+
+	if comment_id in comments_seen_reader.read().splitlines():
+		print("Comment " + comment_id +  " already visited. Skipping.")
+		print("-----------------------------------------------------------------")
+		comments_seen_reader.close()
+		return True
+
+	comments_seen_reader.close()	
+	return False
+
+def get_comment_time(time_utc):
+	time_human_readable = datetime.datetime.utcfromtimestamp(time_utc)
+	print("")
+	print("Comment posted on " + str(time_human_readable) + " UTC")
+
+
+def get_sentiment_analysis(get_sentiment, get_subjectivity):
+	if get_sentiment:
+		comment_text_blob = TextBlob(comment_text)
+		print("")
+		print("Sentiment:")
+		print("Polarity = " + str(comment_text_blob.sentiment.polarity))
+
+		if get_subjectivity:
+			print("Subjectivity = " + str(comment_text_blob.sentiment.subjectivity))
+			print("")
+
+def get_comment_score(get_score, get_score_breakdown):
+	if bot_config.get_score:
+		print("Comment Score = " + str(comment.score))
+		if bot_config.get_score_breakdown:
+			print("Comment Upvotes = " + str(comment.ups))
+			print("Comment Downvotes = " + str(comment.downs))
+
 def run_bot(reddit_instance, subreddit_name, string_to_match):
 
 	# Point bot to desired subreddit(s)
 	subreddit = reddit_instance.subreddit(subreddit_name)
-	comments_seen = bot_config.comments_seen
+	comments_seen_file = bot_config.comments_seen
 
 
 	for comment in subreddit.stream.comments():
 		if string_to_match in comment.body.lower():
-			comments_seen_read = open(comments_seen, 'r')
 
-			if comment.id in comments_seen_read.read().splitlines():
-				print("Comment " + comment.id +  " already visited. Skipping.")
-				print("-----------------------------------------------------------------")
+			# Check if comment already exsists in log and add if necessary
+			if check_if_seen(comments_seen_file, comment.id):
 				continue
-
-			# Add to log of comments seen
-			comments_seen_read.close()
-			comments_seen_write = open(comments_seen,'a+')
-			comments_seen_write.write(comment.id + '\n')
-			comments_seen_write.close()
+			add_to_seen(comments_seen_file, comment.id)
 
 			# Print Time of comment
-			time_utc = comment.created_utc
-			time_human_readable = datetime.datetime.utcfromtimestamp(time_utc)
-			print("")
-			print("Comment posted on " + str(time_human_readable) + " UTC")
-
+			get_comment_time(comment.created_utc)
+			
 			# Print URL
 			print(comment.submission.url + comment.id)
 			print("")
@@ -48,21 +79,12 @@ def run_bot(reddit_instance, subreddit_name, string_to_match):
 			print(comment_text)
 			
 			# Analyze and print sentiment:
-			comment_text_blob = TextBlob(comment_text)
-			print("")
-			print("Sentiment:")
-			print("Polarity = " + str(comment_text_blob.sentiment.polarity))
-			print("Subjectivity = " + str(comment_text_blob.sentiment.subjectivity))
-			print("")
+			get_sentiment_analysis(bot_config.get_sentiment, bot_config.get_subjectivity)
 
 			# Comment Score
-			print("Comment Score = " + str(comment.score))
-			print("Comment Upvotes = " + str(comment.ups))
-			print("Comment Downvotes = " + str(comment.downs))
+			get_comment_score(bot_config.get_comment_score, bot_config.get_score_breakdown)
 
 			print("-----------------------------------------------------------------")
-
-
 
 if __name__ == '__main__':
 
