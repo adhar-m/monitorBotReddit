@@ -14,9 +14,23 @@ def run_bot(reddit_instance, subreddit_name, string_to_match):
 
 	# Point bot to desired subreddit(s)
 	subreddit = reddit_instance.subreddit(subreddit_name)
+	comments_seen = bot_config.comments_seen
+
 
 	for comment in subreddit.stream.comments():
 		if string_to_match in comment.body.lower():
+			comments_seen_read = open(comments_seen, 'r')
+
+			if comment.id in comments_seen_read.read().splitlines():
+				print("Comment " + comment.id +  " already visited. Skipping.")
+				print("-----------------------------------------------------------------")
+				continue
+
+			# Add to log of comments seen
+			comments_seen_read.close()
+			comments_seen_write = open(comments_seen,'a+')
+			comments_seen_write.write(comment.id + '\n')
+			comments_seen_write.close()
 
 			# Print Time of comment
 			time_utc = comment.created_utc
