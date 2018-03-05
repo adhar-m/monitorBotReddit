@@ -4,6 +4,6 @@ A bot to let you easily monitor subreddits of your choice for mentions of your p
 Still very much in progress.
 
 To do:
-- sentiment analysis on/off
-- comment score on/off
-- refactor mentionBot.py into class
+- Add messaging functionality
+- Refactor code into Class?
+- Add command line arguments
