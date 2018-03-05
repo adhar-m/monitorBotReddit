@@ -16,10 +16,10 @@ def add_to_seen(comments_seen_file, comment_id):
 	comments_seen_writer.close()
 
 def check_if_seen(comments_seen_file, comment_id):
-	comments_seen_reader = open(comments_seen, 'r')
+	comments_seen_reader = open(comments_seen_file, 'r')
 
 	if comment_id in comments_seen_reader.read().splitlines():
-		print("Comment " + comment_id +  " already visited. Skipping.")
+		print("Comment " + comment_id +  " already seen. Skipping.")
 		print("-----------------------------------------------------------------")
 		comments_seen_reader.close()
 		return True
@@ -33,7 +33,7 @@ def get_comment_time(time_utc):
 	print("Comment posted on " + str(time_human_readable) + " UTC")
 
 
-def get_sentiment_analysis(get_sentiment, get_subjectivity):
+def get_sentiment_analysis(get_sentiment, get_subjectivity, comment_text):
 	if get_sentiment:
 		comment_text_blob = TextBlob(comment_text)
 		print("")
@@ -44,7 +44,7 @@ def get_sentiment_analysis(get_sentiment, get_subjectivity):
 			print("Subjectivity = " + str(comment_text_blob.sentiment.subjectivity))
 			print("")
 
-def get_comment_score(get_score, get_score_breakdown):
+def get_comment_score(get_score, get_score_breakdown, comment):
 	if bot_config.get_score:
 		print("Comment Score = " + str(comment.score))
 		if bot_config.get_score_breakdown:
@@ -79,10 +79,10 @@ def run_bot(reddit_instance, subreddit_name, string_to_match):
 			print(comment_text)
 			
 			# Analyze and print sentiment:
-			get_sentiment_analysis(bot_config.get_sentiment, bot_config.get_subjectivity)
+			get_sentiment_analysis(bot_config.get_sentiment, bot_config.get_subjectivity, comment_text)
 
 			# Comment Score
-			get_comment_score(bot_config.get_comment_score, bot_config.get_score_breakdown)
+			get_comment_score(bot_config.get_score, bot_config.get_score_breakdown, comment)
 
 			print("-----------------------------------------------------------------")
 
