@@ -7,56 +7,50 @@ import bot_config
 
 def init_bot_login():
 	# Initialize PRAW with config file details and return reddit object
-	reddit = praw.Reddit(client_id=praw_config.client_id, client_secret=praw_config.client_secret, user_agent=praw_config.user_agent)
+	print("Logging you in...")
+	reddit = praw.Reddit(client_id=praw_config.client_id,
+						 client_secret=praw_config.client_secret,
+						 password=praw_config.password, 
+						 user_agent=praw_config.user_agent,
+					     username=praw_config.username,
+					     )
+	print("Authentication as " + str(reddit.user.me()) + " succesful!\n")
 	return reddit
 
+def construct_message_string(comment_time, comment_url, comment_text, sentiment, score):
+
+	return 
+
 def add_to_seen(comments_seen_file, comment_id):
-	comments_seen_writer = open(comments_seen_file,'a+')
-	comments_seen_writer.write(comment_id + '\n')
-	comments_seen_writer.close()
+	with open(comments_seen_file,"a+") as comments_seen_writer:
+		comments_seen_writer.write(comment_id + "\n")
+		print("Comment " + comment_id + " added to log file.")
 
 def check_if_seen(comments_seen_file, comment_id):
-	comments_seen_reader = open(comments_seen_file, 'r')
+	with open(comments_seen_file, "r") as comments_seen_reader:
 
-	if comment_id in comments_seen_reader.read().splitlines():
-		print("Comment " + comment_id +  " already seen. Skipping.")
-		print("-----------------------------------------------------------------")
-		comments_seen_reader.close()
-		return True
-
-	comments_seen_reader.close()	
-	return False
+		if comment_id in comments_seen_reader.read().splitlines():
+			print("Comment " + comment_id +  " already seen. Skipping.\n")
+			return True
+		return False
 
 def get_comment_time(time_utc):
 	time_human_readable = datetime.datetime.utcfromtimestamp(time_utc)
-	print("")
-	print("Comment posted on " + str(time_human_readable) + " UTC")
+	return time_human_readable
 
 
-def get_sentiment_analysis(get_sentiment, get_subjectivity, comment_text):
-	if get_sentiment:
-		comment_text_blob = TextBlob(comment_text)
-		print("")
-		print("Sentiment:")
-		print("Polarity = " + str(comment_text_blob.sentiment.polarity))
+def get_sentiment_analysis(comment_text):
+	comment_text_blob = TextBlob(comment_text)
+	return comment_text_blob.sentiment
 
-		if get_subjectivity:
-			print("Subjectivity = " + str(comment_text_blob.sentiment.subjectivity))
-			print("")
-
-def get_comment_score(get_score, get_score_breakdown, comment):
-	if bot_config.get_score:
-		print("Comment Score = " + str(comment.score))
-		if bot_config.get_score_breakdown:
-			print("Comment Upvotes = " + str(comment.ups))
-			print("Comment Downvotes = " + str(comment.downs))
+def get_comment_score(comment):
+	return (comment.score, comment.ups, comment.downs)
 
 def run_bot(reddit_instance, subreddit_name, string_to_match):
 
 	# Point bot to desired subreddit(s)
 	subreddit = reddit_instance.subreddit(subreddit_name)
 	comments_seen_file = bot_config.comments_seen
-
 
 	for comment in subreddit.stream.comments():
 		if string_to_match in comment.body.lower():
@@ -66,25 +60,16 @@ def run_bot(reddit_instance, subreddit_name, string_to_match):
 				continue
 			add_to_seen(comments_seen_file, comment.id)
 
-			# Print Time of comment
-			get_comment_time(comment.created_utc)
-			
-			# Print URL
-			print(comment.submission.url + comment.id)
-			print("")
-
-			# Print Body
+			comment_time = get_comment_time(comment.created_utc)
+			comment_url = comment.submission.url + comment.id
 			comment_text = comment.body
-			print("Comment Text:")
-			print(comment_text)
-			
-			# Analyze and print sentiment:
-			get_sentiment_analysis(bot_config.get_sentiment, bot_config.get_subjectivity, comment_text)
+			sentiment = get_sentiment_analysis(comment_text)
+			score = get_comment_score(comment)
 
-			# Comment Score
-			get_comment_score(bot_config.get_score, bot_config.get_score_breakdown, comment)
+			msg = comment_url
 
-			print("-----------------------------------------------------------------")
+			reddit.redditor(praw_config.username).message("Mention bot found a match", msg)
+			print("Messaged user about comment " + comment.id +'\n')
 
 if __name__ == '__main__':
 
