@@ -10,7 +10,8 @@ In order to run the script, make sure you have the following installed:
 - textblob 0.15.1
 
 # Instructions
-1. Make a reddit account and register your app as a script
-2. Enter your details in the praw_config.py file
-3. Set your preferences for the bot in bot_config.py (including search term, subreddit, sentiment analysis and comment score on/off)
-4. Run mentionBot.py from your terminal
+1. Clone or download this repository
+2. [Authorize this app as a script](https://github.com/reddit-archive/reddit/wiki/OAuth2) from your reddit account
+3. Enter your authorization details in the praw_config.py file
+4. Set your settings for the bot in bot_config.py (including search term, subreddit, sentiment analysis and comment score on/off)
+5. Run mentionBot.py from your terminal
