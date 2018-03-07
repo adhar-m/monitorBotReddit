@@ -3,7 +3,14 @@ A bot to let you easily monitor subreddits of your choice for mentions of your p
 
 Still very much in progress.
 
-To do:
-- Refactor code into Class?
-- Add command line arguments
-- Consider creating digest functionality to batch messages before sending
+# Requirements
+In order to run the script, make sure you have the following installed:
+- python 3 
+- praw 5.3.0
+- textblob 0.15.1
+
+# Instructions
+1. Make a reddit account and register your app as a script
+2. Enter your details in the praw_config.py file
+3. Set your preferences for the bot in bot_config.py (including search term, subreddit, sentiment analysis and comment score on/off)
+4. Run mentionBot.py from your terminal
