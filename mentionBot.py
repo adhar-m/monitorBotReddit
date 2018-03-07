@@ -9,17 +9,31 @@ def init_bot_login():
 	# Initialize PRAW with config file details and return reddit object
 	print("Logging you in...")
 	reddit = praw.Reddit(client_id=praw_config.client_id,
-						 client_secret=praw_config.client_secret,
-						 password=praw_config.password, 
-						 user_agent=praw_config.user_agent,
-					     username=praw_config.username,
-					     )
+		client_secret=praw_config.client_secret,
+		password=praw_config.password, 
+		user_agent=praw_config.user_agent,
+		username=praw_config.username
+		)
+	
 	print("Authentication as " + str(reddit.user.me()) + " succesful!\n")
 	return reddit
 
-def construct_message_string(comment_time, comment_url, comment_text, sentiment, score):
+def construct_message_string(comment, comment_time, comment_url, comment_text):
+	match_found_line = "Match found for comment by user *{}*, posted on {} UTC \n\n".format(comment.author, str(comment_time))
+	url_line = comment_url + "\n\n"
+	sentiment_line = ""
+	score_line = ""
 
-	return 
+	if bot_config.get_sentiment:
+		sentiment = get_sentiment_analysis(comment_text)
+		sentiment_line = "**Sentiment polarity:** {} (subjectivity: {})\n\n".format(sentiment.polarity, sentiment.subjectivity)
+
+	if bot_config.get_score:
+		score = get_comment_score(comment)
+		score_line = "**Comment score:**  {} ({} upvotes and {} downvotes)".format(score[0], score[1], score[2])
+	
+	msg = match_found_line + url_line + sentiment_line + score_line
+	return msg
 
 def add_to_seen(comments_seen_file, comment_id):
 	with open(comments_seen_file,"a+") as comments_seen_writer:
@@ -63,12 +77,10 @@ def run_bot(reddit_instance, subreddit_name, string_to_match):
 			comment_time = get_comment_time(comment.created_utc)
 			comment_url = comment.submission.url + comment.id
 			comment_text = comment.body
-			sentiment = get_sentiment_analysis(comment_text)
-			score = get_comment_score(comment)
 
-			msg = comment_url
+			msg = construct_message_string(comment, comment_time, comment_url, comment_text)
 
-			reddit.redditor(praw_config.username).message("Mention bot found a match", msg)
+			reddit.redditor(praw_config.username).message("Mention bot found a match (keyword: {})".format(bot_config.search_term), msg)
 			print("Messaged user about comment " + comment.id +'\n')
 
 if __name__ == '__main__':
