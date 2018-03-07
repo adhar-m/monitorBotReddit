@@ -4,6 +4,7 @@ A bot to let you easily monitor subreddits of your choice for mentions of your p
 Still very much in progress.
 
 To do:
-- Add messaging functionality
+- Complete messaging functionality
+- Implement on/off options for sentiment and comment score
 - Refactor code into Class?
 - Add command line arguments
