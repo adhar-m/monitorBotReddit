@@ -13,17 +13,5 @@ comments_seen = "comments_seen.txt"
 # Conduct sentiment analysis?
 get_sentiment = True
 
-# Display subjectivity with sentiment?
-get_subjectivity = True
-
 # Fetch Comment Score?
 get_score = True
-
-# Fetch number of up/down votes for Score?
-get_score_breakdown = True
-
-# Message you the results?
-get_messages = True
-
-# Create a digest? If True, how many messages per digest?
-get_digest = (True, 10)
