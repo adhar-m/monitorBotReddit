@@ -17,4 +17,4 @@ In order to run the script, make sure you have the following installed:
 5. Run mentionBot.py from your terminal
 
 # Sample Alert
-![Sample Alert](https://pasteboard.co/HdtIcsv.png)
+![Sample Alert](https://image.ibb.co/huMmjn/Screenshot_from_2018_03_24_21_00_51.png)
