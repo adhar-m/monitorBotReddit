@@ -16,5 +16,5 @@ In order to run the script, make sure you have the following installed:
 4. Set your settings for the bot in bot_config.py (including search term, subreddit, sentiment analysis and comment score on/off)
 5. Run mentionBot.py from your terminal
 
-#Sample Alert
+# Sample Alert
 ![Sample Alert](https://pasteboard.co/HdtIcsv.png)
