@@ -1,7 +1,8 @@
 # Mention Bot (Reddit)
-A bot to let you easily monitor subreddits of your choice for mentions of your product/company. It also returns the sentiment (polarity and subjectivity) of that comment, along with its score. Useful for entrepreneurs or customer service representatives who want to monitor conversations about their products and respond to customer feedback on Reddit.
+A bot to let you easily monitor subreddits of your choice for mentions of a particular word or phrase. It also returns the sentiment (polarity and subjectivity) of that comment, along with its score. 
 
-Still very much in progress.
+# Why is this useful? 
+Useful for product managers or customer service representatives who want to monitor conversations about their products and respond to feedback on Reddit.
 
 # Requirements
 In order to run the script, make sure you have the following installed:
